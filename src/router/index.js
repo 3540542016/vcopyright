@@ -8,7 +8,22 @@ const routes = [
     path: '/',
     name: 'loginRegister',
     component: () => import('../views/LoginView.vue')
-  }
+  },
+  {
+    path: '/creator',
+    name: '内容创作者',
+    component: () => import('../views/users/creatorView.vue')
+  },
+  {
+    path: '/holder',
+    name: '版权持有者',
+    component: () => import('../views/users/holderView.vue')
+  },
+  {
+    path: '/auditor',
+    name: '审核机构',
+    component: () => import('../views/users/auditorView.vue')
+  },
 ]
 
 const router = new VueRouter({
