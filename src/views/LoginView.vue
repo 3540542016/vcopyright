@@ -74,7 +74,6 @@
             >
               <el-radio label="creator">内容创作者</el-radio>
               <el-radio label="holder">版权持有者</el-radio>
-              <el-radio label="auditor">审核机构</el-radio>
             </el-radio-group>
           </div>
           <el-button
@@ -158,7 +157,7 @@ export default {
 
           console.log(response.data)
 
-          if (response.data.code === 0){
+          if (response.data.code === 200){
             const userType = response.data.data.role;
             switch (userType) {
             case "creator":
@@ -178,10 +177,13 @@ export default {
               break;
           }
           }else if (response.data.code === -1){
-            this.$message.error("用户名不存在或角色不匹配");
+            this.$message.error("用户名错误或角色不匹配");
           }
           else if(response.data.code === -2){
             this.$message.error("密码错误");
+          }
+          else{
+            this.$message.error("未知错误");
           }
 
         })
@@ -194,8 +196,18 @@ export default {
       Axios.post("http://localhost:8080/users/register", this.registerForm)
         .then((response) => {
           console.log(response.data);
-          this.$message.success("注册成功");
-          this.toggleForms();
+          if (response.data.code === 200){
+            this.$message.success("注册成功");
+            this.toggleForms();
+          }else if (response.data.code === -1){
+            this.$message.error("用户名已存在");
+          }else if(response.data.code === -2){
+            this.$message.error("邮箱已存在");
+          }
+          else{
+            this.$message.error("未知错误");
+          }
+
         })
         .catch((error) => {
           console.log(error);
