@@ -3,7 +3,7 @@
     <div class="forms-container">
       <div class="signin-signup">
         <!-- 登录表单 -->
-        <form action="#" class="sign-in-form">
+        <form class="sign-in-form">
           <h2 class="title">登录</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
@@ -33,14 +33,14 @@
             type="submit"
             class="btn solid"
             icon="el-icon-s-promotion"
-            @click="login"
+            @click.prevent="login"
           >
             登录
           </el-button>
         </form>
 
         <!-- 注册表单 -->
-        <form action="#" class="sign-up-form">
+        <form class="sign-up-form">
           <h2 class="title">注册</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
@@ -80,7 +80,7 @@
             type="submit"
             class="btn"
             icon="el-icon-s-promotion"
-            @click="register"
+            @click.prevent="register"
           >
             注册
           </el-button>
@@ -108,7 +108,7 @@
       </div>
       <div class="panel right-panel">
         <div class="content">
-          <h3>One of us ?</h3>
+          <h3></h3>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
             laboriosam ad deleniti.
@@ -126,8 +126,8 @@
     </div>
   </div>
 </template>
-  
-  <script>
+
+<script>
 import Axios from "axios";
 
 export default {
@@ -152,62 +152,62 @@ export default {
       container.classList.toggle("sign-up-mode");
     },
     login() {
+      if (!this.loginForm.username || !this.loginForm.password) {
+        this.$message.error("用户名和密码不能为空");
+        return;
+      }
+
       Axios.post("http://localhost:8080/users/login", this.loginForm)
         .then((response) => {
+          console.log(response.data);
 
-          console.log(response.data)
-
-          if (response.data.code === 200){
+          if (response.data.code === 200) {
             const userType = response.data.data.role;
             switch (userType) {
-            case "creator":
-              // 登录成功，跳转到 CreatorView 页面
-              this.$message.success("登录成功");
-              this.$router.push("/creator");
-              break;
-            case "holder":
-              // 登录成功，跳转到 HolderView 页面
-              this.$message.success("登录成功");
-              this.$router.push("/holder");
-              break;
-            case "auditor":
-              // 登录成功，跳转到 AuditorView 页面
-              this.$message.success("登录成功");
-              this.$router.push("/auditor");
-              break;
-          }
-          }else if (response.data.code === -1){
+              case "creator":
+                this.$message.success("登录成功");
+                this.$router.push("/creator");
+                break;
+              case "holder":
+                this.$message.success("登录成功");
+                this.$router.push("/holder");
+                break;
+              case "auditor":
+                this.$message.success("登录成功");
+                this.$router.push("/auditor");
+                break;
+            }
+          } else if (response.data.code === -1) {
             this.$message.error("用户名错误或角色不匹配");
-          }
-          else if(response.data.code === -2){
+          } else if (response.data.code === -2) {
             this.$message.error("密码错误");
-          }
-          else{
+          } else {
             this.$message.error("未知错误");
           }
-
         })
         .catch((error) => {
           console.log(error);
         });
     },
     register() {
-      // 处理注册逻辑
+      if (!this.registerForm.username || !this.registerForm.password || !this.registerForm.email) {
+        this.$message.error("用户名、密码和邮箱不能为空");
+        return;
+      }
+
       Axios.post("http://localhost:8080/users/register", this.registerForm)
         .then((response) => {
           console.log(response.data);
-          if (response.data.code === 200){
+          if (response.data.code === 200) {
             this.$message.success("注册成功");
             this.toggleForms();
-          }else if (response.data.code === -1){
+          } else if (response.data.code === -1) {
             this.$message.error("用户名已存在");
-          }else if(response.data.code === -2){
+          } else if (response.data.code === -2) {
             this.$message.error("邮箱已存在");
-          }
-          else{
+          } else {
             this.$message.error("未知错误");
           }
-
         })
         .catch((error) => {
           console.log(error);
@@ -216,8 +216,7 @@ export default {
   },
 };
 </script>
-  
-  <style scoped>
+
+<style scoped>
 @import "@/assets/css/style.css";
 </style>
-  
