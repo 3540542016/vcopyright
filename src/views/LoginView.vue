@@ -13,6 +13,14 @@
               <i class="fas fa-lock"></i>
               <input type="password" placeholder="密码" v-model="loginForm.password" />
             </div>
+            <div >
+              <i class="fas fa-briefcase"></i>
+              <el-radio-group v-model="loginForm.role" class="role-radio-group">
+                <el-radio label="creator">内容创作者</el-radio>
+                <el-radio label="holder">版权持有者</el-radio>
+                <el-radio label="auditor">审核机构</el-radio>
+                </el-radio-group>
+            </div>
             <el-button type="submit" class="btn solid" icon="el-icon-s-promotion" @click="login">
               登录
             </el-button>
@@ -93,7 +101,8 @@
       return {
         loginForm: {
           username: '',
-          password: ''
+          password: '',
+          role: 'creator'
         },
         registerForm: {
           username: '',
