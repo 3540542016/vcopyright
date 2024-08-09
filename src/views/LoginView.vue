@@ -9,8 +9,8 @@
             <i class="fas fa-user"></i>
             <input
               type="text"
-              placeholder="用户名"
-              v-model="loginForm.username"
+              placeholder="邮箱"
+              v-model="loginForm.email"
             />
           </div>
           <div class="input-field">
@@ -25,7 +25,6 @@
             <i class="fas fa-briefcase"></i>
             <el-radio-group v-model="loginForm.role" class="role-radio-group">
               <el-radio label="creator">内容创作者</el-radio>
-              <el-radio label="holder">版权持有者</el-radio>
               <el-radio label="auditor">审核机构</el-radio>
             </el-radio-group>
           </div>
@@ -66,16 +65,6 @@
               v-model="registerForm.password"
             />
           </div>
-          <div>
-            <i class="fas fa-briefcase"></i>
-            <el-radio-group
-              v-model="registerForm.role"
-              class="role-radio-group"
-            >
-              <el-radio label="creator">内容创作者</el-radio>
-              <el-radio label="holder">版权持有者</el-radio>
-            </el-radio-group>
-          </div>
           <el-button
             type="submit"
             class="btn"
@@ -91,10 +80,9 @@
     <div class="panels-container">
       <div class="panel left-panel">
         <div class="content">
-          <h3>New here ?</h3>
+          <h3>欢迎回来</h3>
           <p>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis,
-            ex ratione. Aliquid!
+            继续创作或审核，您的灵感和才华值得被认可与保护。输入您的账号信息，继续探索版权的世界!
           </p>
           <el-button
             class="btn transparent"
@@ -108,10 +96,9 @@
       </div>
       <div class="panel right-panel">
         <div class="content">
-          <h3></h3>
+          <h3>加入我们</h3>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-            laboriosam ad deleniti.
+            开始保护您的创意作品并探索无限的可能性。注册一个新账号，与全球创作者和审核机构共同打造数字版权生态。
           </p>
           <el-button
             class="btn transparent"
@@ -134,7 +121,7 @@ export default {
   data() {
     return {
       loginForm: {
-        username: "",
+        email: "",
         password: "",
         role: "creator",
       },
@@ -142,7 +129,6 @@ export default {
         username: "",
         password: "",
         email: "",
-        role: "creator",
       },
     };
   },
@@ -152,7 +138,7 @@ export default {
       container.classList.toggle("sign-up-mode");
     },
     login() {
-      if (!this.loginForm.username || !this.loginForm.password) {
+      if (!this.loginForm.email || !this.loginForm.password) {
         this.$message.error("用户名和密码不能为空");
         return;
       }
@@ -168,17 +154,13 @@ export default {
                 this.$message.success("登录成功");
                 this.$router.push("/creator");
                 break;
-              case "holder":
-                this.$message.success("登录成功");
-                this.$router.push("/holder");
-                break;
               case "auditor":
                 this.$message.success("登录成功");
                 this.$router.push("/auditor");
                 break;
             }
           } else if (response.data.code === -1) {
-            this.$message.error("用户名错误或角色不匹配");
+            this.$message.error("邮箱错误或角色不匹配");
           } else if (response.data.code === -2) {
             this.$message.error("密码错误");
           } else {
@@ -201,6 +183,12 @@ export default {
           if (response.data.code === 200) {
             this.$message.success("注册成功");
             this.toggleForms();
+            this.registerForm = {
+              username: "",
+              password: "",
+              email: "",
+            };
+
           } else if (response.data.code === -1) {
             this.$message.error("用户名已存在");
           } else if (response.data.code === -2) {
