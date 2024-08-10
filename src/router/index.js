@@ -11,12 +11,12 @@ const routes = [
   },
   {
     path: '/creator',
-    name: '内容创作者',
+    name: 'creator',
     component: () => import('../views/users/creatorView.vue')
   },
   {
     path: '/auditor',
-    name: '审核机构',
+    name: 'auditor',
     component: () => import('../views/users/auditorView.vue')
   },
 ]
@@ -27,4 +27,9 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to ,from ,next) =>{
+  const token = localStorage.getItem("token")
+  if(to.name != "loginRegister" && !token) next({ name: "loginRegister"})
+  else next()
+})
 export default router
