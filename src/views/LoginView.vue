@@ -116,7 +116,6 @@
 
 <script>
 import request from "@/utils/request";
-import Axios from "axios";
 
 export default {
   data() {
@@ -188,7 +187,7 @@ export default {
         return;
       }
 
-      Axios.post("http://localhost:8080/users/register", this.registerForm)
+      request.post("/users/register", this.registerForm)
         .then((response) => {
           console.log(response.data);
           if (response.data.code === 200) {
