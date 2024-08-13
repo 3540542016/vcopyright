@@ -158,7 +158,8 @@ export default {
             // let userinfo = JSON.parse(decodeString);
 
             // 根据角色跳转
-            switch (response.data.data) {
+            switch (response.data.data.role) {
+ 
               case "creator":
                 this.$message.success("登录成功");
                 this.$router.push("/creator");
@@ -189,7 +190,6 @@ export default {
 
       request.post("/users/register", this.registerForm)
         .then((response) => {
-          console.log(response.data);
           if (response.data.code === 200) {
             this.$message.success("注册成功");
             this.toggleForms();
