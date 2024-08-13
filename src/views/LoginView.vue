@@ -7,19 +7,11 @@
           <h2 class="title">登录</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
-            <input
-              type="text"
-              placeholder="邮箱"
-              v-model="loginForm.email"
-            />
+            <input type="text" placeholder="邮箱" v-model="loginForm.email" />
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
-            <input
-              type="password"
-              placeholder="密码"
-              v-model="loginForm.password"
-            />
+            <input type="password" placeholder="密码" v-model="loginForm.password" />
           </div>
           <div>
             <i class="fas fa-briefcase"></i>
@@ -28,12 +20,7 @@
               <el-radio label="auditor">审核机构</el-radio>
             </el-radio-group>
           </div>
-          <el-button
-            type="submit"
-            class="btn solid"
-            icon="el-icon-s-promotion"
-            @click.prevent="login"
-          >
+          <el-button type="submit" class="btn solid" icon="el-icon-s-promotion" @click.prevent="login">
             登录
           </el-button>
         </form>
@@ -43,34 +30,17 @@
           <h2 class="title">注册</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
-            <input
-              type="text"
-              placeholder="用户名"
-              v-model="registerForm.username"
-            />
+            <input type="text" placeholder="用户名" v-model="registerForm.username" />
           </div>
           <div class="input-field">
             <i class="fas fa-envelope"></i>
-            <input
-              type="email"
-              placeholder="Email"
-              v-model="registerForm.email"
-            />
+            <input type="email" placeholder="Email" v-model="registerForm.email" />
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
-            <input
-              type="password"
-              placeholder="密码"
-              v-model="registerForm.password"
-            />
+            <input type="password" placeholder="密码" v-model="registerForm.password" />
           </div>
-          <el-button
-            type="submit"
-            class="btn"
-            icon="el-icon-s-promotion"
-            @click.prevent="register"
-          >
+          <el-button type="submit" class="btn" icon="el-icon-s-promotion" @click.prevent="register">
             注册
           </el-button>
         </form>
@@ -84,12 +54,7 @@
           <p>
             继续创作或审核，您的灵感和才华值得被认可与保护。输入您的账号信息，继续探索版权的世界!
           </p>
-          <el-button
-            class="btn transparent"
-            id="sign-up-btn"
-            @click="toggleForms"
-            icon="el-icon-s-promotion"
-          >
+          <el-button class="btn transparent" id="sign-up-btn" @click="toggleForms" icon="el-icon-s-promotion">
             注册
           </el-button>
         </div>
@@ -100,12 +65,7 @@
           <p>
             开始保护您的创意作品并探索无限的可能性。注册一个新账号，与全球创作者和审核机构共同打造数字版权生态。
           </p>
-          <el-button
-            class="btn transparent"
-            id="sign-in-btn"
-            @click="toggleForms"
-            icon="el-icon-s-promotion"
-          >
+          <el-button class="btn transparent" id="sign-in-btn" @click="toggleForms" icon="el-icon-s-promotion">
             登录
           </el-button>
         </div>
@@ -149,10 +109,11 @@ export default {
 
           if (response.data.code === 200) {
             const userType = response.data.data.role;
+            console.log(userType)
             switch (userType) {
               case "creator":
                 this.$message.success("登录成功");
-                this.$router.push("/creator");
+                this.$router.push("/creatorhome");
                 break;
               case "auditor":
                 this.$message.success("登录成功");

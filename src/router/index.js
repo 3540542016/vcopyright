@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -10,22 +11,22 @@ const routes = [
     component: () => import('../views/LoginView.vue')
   },
   {
-    path: '/creator',
-    name: '内容创作者',
-    component: () => import('../views/users/creatorView.vue')
-  },
+      path: '/creatorhome',
+      name: 'creatorhome',
+      component: () => import('../views/CreatorHomeView.vue')
+    }
+  ,
   {
-    path: '/auditor',
-    name: '审核机构',
-    component: () => import('../views/users/auditorView.vue'),
-    redirect: '/auditor1',
-    children: [
-      //子路由
-      { path: '/auditor1', component: () => import('../views/users/auditor1.vue') },
-      { path: '/auditor2', component: () => import('../views/users/auditor2.vue') },
-      { path: '/auditor3', component: () => import('../views/users/auditor3.vue') }
-    ]
-  },
+      path: '/creatework',
+      name: 'creatework',
+      component: () => import('../views/CreateWorkView.vue')
+  }
+  ,
+  {
+      path: '/creatormanagement',
+      name: 'creatormanagement',
+      component: () => import('../views/CreatorManagementView.vue')
+    }
 ]
 
 const router = new VueRouter({
