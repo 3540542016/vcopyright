@@ -11,6 +11,12 @@ const routes = [
     component: () => import('../views/LoginView.vue')
   },
   {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
+  }
+  ,
+  {
       path: '/creatorhome',
       name: 'creatorhome',
       component: () => import('../views/CreatorHomeView.vue')
@@ -26,7 +32,22 @@ const routes = [
       path: '/creatormanagement',
       name: 'creatormanagement',
       component: () => import('../views/CreatorManagementView.vue')
-    }
+  },
+   {
+    path: '/auditor',
+    name: 'auditor',
+    component: () => import('../views/auditorView.vue')
+  },
+   {
+    path: '/audited',
+    name: 'audited',
+    component: () => import('../views/auditedView.vue')
+  },
+   {
+    path: '/createallwork',
+    name: 'createallwork',
+    component: () => import('../views/CreateAllworkView.vue')
+  }
 ]
 
 const router = new VueRouter({

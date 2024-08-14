@@ -36,6 +36,22 @@ export default {
                     }
                 });
             }
+        },
+        gouserall() {
+            const createallwork = '/createallwork';
+            if (this.$route.path !== createallwork) {
+                this.$router.push(createallwork).catch(err => {
+                    if (err.name !== 'createallwork') {
+                        console.error(err);
+                    }
+                });
+            }
+        },
+        outLogin() {
+            this.$message.success("退出成功")
+            localStorage.removeItem("id")
+            this.$router.push('/');
+
         }
     }
 };
@@ -61,7 +77,7 @@ export default {
                                     <el-dropdown>
                                         <i class="el-icon-setting" style="margin-right: 15px"></i>
                                         <el-dropdown-menu slot="dropdown">
-                                            <el-dropdown-item>退出登录</el-dropdown-item>
+                                            <el-button @click="outLogin">退出登录</el-button>
                                         </el-dropdown-menu>
                                     </el-dropdown>
                                 </ul>
@@ -99,6 +115,7 @@ export default {
                         <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
                             <li @click="gomyuser">我的作品</li>
                             <li @click="gouseradd">添加作品</li>
+                            <li @click="gouserall">全部作品</li>
                         </ul>
                     </li>
                 </ul>
@@ -349,5 +366,8 @@ export default {
     /* 设置图标大小 */
     color: white;
     /* 设置图标颜色为白色 */
+}
+.el-button {
+    border: none;
 }
 </style>

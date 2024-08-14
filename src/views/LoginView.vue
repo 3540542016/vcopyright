@@ -3,7 +3,7 @@
     <div class="forms-container">
       <div class="signin-signup">
         <!-- 登录表单 -->
-        <form class="sign-in-form">
+        <el-form class="sign-in-form" v-model="loginForm" @keyup.enter.native="login">
           <h2 class="title">登录</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
@@ -23,10 +23,10 @@
           <el-button type="submit" class="btn solid" icon="el-icon-s-promotion" @click.prevent="login">
             登录
           </el-button>
-        </form>
+        </el-form>
 
         <!-- 注册表单 -->
-        <form class="sign-up-form">
+        <el-form class="sign-up-form" v-model="registerForm" @keyup.enter.native="register">
           <h2 class="title">注册</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
@@ -43,7 +43,7 @@
           <el-button type="submit" class="btn" icon="el-icon-s-promotion" @click.prevent="register">
             注册
           </el-button>
-        </form>
+        </el-form>
       </div>
     </div>
 
@@ -52,7 +52,7 @@
         <div class="content">
           <h3>欢迎回来</h3>
           <p>
-            继续创作或审核，您的灵感和才华值得被认可与保护。输入您的账号信息，继续探索版权的世界!
+            继续创作或审核，您的灵感和才华值得被认可与保护。输入您的账号信息，继续探索版权的世界。
           </p>
           <el-button class="btn transparent" id="sign-up-btn" @click="toggleForms" icon="el-icon-s-promotion">
             注册
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import Axios from "axios";
+import request from "@/utils/request";
 
 export default {
   data() {
@@ -103,13 +103,13 @@ export default {
         return;
       }
 
-      Axios.post("http://localhost:8080/users/login", this.loginForm)
+      request.post("/users/login", this.loginForm)
         .then((response) => {
-          console.log(response.data);
 
           if (response.data.code === 200) {
-            const userType = response.data.data.role;
-            console.log(userType)
+            localStorage.setItem("id", response.data.data.id)
+
+            const userType = response.data.data.role
             switch (userType) {
               case "creator":
                 this.$message.success("登录成功");
@@ -120,12 +120,13 @@ export default {
                 this.$router.push("/auditor");
                 break;
             }
-          } else if (response.data.code === -1) {
-            this.$message.error("邮箱错误或角色不匹配");
+          }
+          else if (response.data.code === -1) {
+            this.$message.error(response.data.msg);
           } else if (response.data.code === -2) {
             this.$message.error("密码错误");
           } else {
-            this.$message.error("未知错误");
+            this.$message.error(response.data.msg);
           }
         })
         .catch((error) => {
@@ -138,9 +139,8 @@ export default {
         return;
       }
 
-      Axios.post("http://localhost:8080/users/register", this.registerForm)
+      request.post("/users/register", this.registerForm)
         .then((response) => {
-          console.log(response.data);
           if (response.data.code === 200) {
             this.$message.success("注册成功");
             this.toggleForms();
@@ -151,11 +151,11 @@ export default {
             };
 
           } else if (response.data.code === -1) {
-            this.$message.error("用户名已存在");
+            this.$message.error(response.data.msg);
           } else if (response.data.code === -2) {
-            this.$message.error("邮箱已存在");
+            this.$message.error(response.data.msg);
           } else {
-            this.$message.error("未知错误");
+            this.$message.error(response.data.msg);
           }
         })
         .catch((error) => {

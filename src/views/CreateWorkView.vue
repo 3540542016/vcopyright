@@ -1,11 +1,10 @@
 <script>
-
 export default {
     data() {
         return {
             labelPosition: 'right',
             formLabelAlign: {
-                id: '',
+                id: localStorage.getItem("id"),
                 title: '',
                 description: ''
             }
@@ -36,23 +35,57 @@ export default {
             const targetRoute = '/creatorhome';
             if (this.$route.path !== targetRoute) {
                 this.$router.push(targetRoute).catch(err => {
-                    if (err.name !== 'creatorhome') {
+                    if (err.name !== 'NavigationDuplicated') {
+                        console.error(err);
+                    }
+                });
+            }
+        },
+        gouserall() {
+            const createallwork = '/createallwork';
+            if (this.$route.path !== createallwork) {
+                this.$router.push(createallwork).catch(err => {
+                    if (err.name !== 'NavigationDuplicated') {
                         console.error(err);
                     }
                 });
             }
         },
         upload() {
-            this.axios.post('http://localhost:8080/works/creator/show', this.formLabelAlign).then(function (resp) {
-                if (resp.data.code == 0) {
-                    alert("新建成功")
+            if (!this.formLabelAlign.title.trim()) {
+                this.$message.error('请输入作品名称');
+                return;
+            }
+            if (!this.formLabelAlign.description.trim()) {
+                this.$message.error('请输入作品介绍');
+                return;
+            }
+            this.axios.post('http://localhost:8080/works/creator/upload', this.formLabelAlign).then((resp) => {
+                if (resp.data.code === 200) {
+                    this.$message.success("新建成功");
+                    this.formLabelAlign.title = '';
+                    this.formLabelAlign.description = '';
+                    // 跳转到“我的作品”页面
+                    this.$router.push('/creatormanagement').catch(err => {
+                        if (err.name !== 'NavigationDuplicated') {
+                            console.error(err);
+                        }
+                    });
                 } else {
-                    alert("新建失败")
+                    this.$message.error("新建失败");
                 }
-
-            })
+            }).catch(error => {
+                console.error("Error uploading data:", error);
+                this.$message.error("新建失败");
+            });
+        },
+        outLogin() {
+            this.$message.success("退出成功");
+            localStorage.removeItem("id");
+            this.$router.push('/');
         }
     }
+
 }
 </script>
 
@@ -64,21 +97,19 @@ export default {
             <div class="container-fluid">
                 <div class="row gutters">
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-9">
-                        <a href="index.html" class="logo">
+                        <a href="#" class="logo">
                             <img :src="require('@/assets/img/logo.png')" alt="Logo">
                             版权管理创作者中心平台
                         </a>
                     </div>
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-3">
                         <ul class="header-actions">
-                            <ul class="header-actions">
-                                <el-dropdown>
-                                    <i class="el-icon-setting" style="margin-right: 15px"></i>
-                                    <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item>退出登录</el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </el-dropdown>
-                            </ul>
+                            <el-dropdown>
+                                <i class="el-icon-setting" style="margin-right: 15px"></i>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-button @click="outLogin">退出登录</el-button>
+                                </el-dropdown-menu>
+                            </el-dropdown>
                         </ul>
                     </div>
                 </div>
@@ -112,6 +143,7 @@ export default {
                         <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
                             <li @click="gomyuser">我的作品</li>
                             <li @click="gouseradd">添加作品</li>
+                            <li @click="gouserall">全部作品</li>
                         </ul>
                     </li>
                 </ul>
@@ -122,7 +154,7 @@ export default {
         <div class="main-container">
             <div class="page-header">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active">欢迎使用社区身心健康管理元平台</li>
+                    <li class="breadcrumb-item active">欢迎使用版权管理创作者中心平台</li>
                 </ol>
             </div>
         </div>
@@ -135,14 +167,11 @@ export default {
             </el-radio-group>
             <div style="margin: 20px;"></div>
             <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-                <el-form-item label="作品id">
-                    <el-input v-model="formLabelAlign.id"></el-input>
-                </el-form-item>
                 <el-form-item label="作品名称">
-                    <el-input v-model="formLabelAlign.title"></el-input>
+                    <el-input v-model="formLabelAlign.title" placeholder="请输入作品名称"></el-input>
                 </el-form-item>
                 <el-form-item label="作品介绍">
-                    <el-input v-model="formLabelAlign.description"></el-input>
+                    <el-input v-model="formLabelAlign.description" placeholder="请输入作品介绍"></el-input>
                 </el-form-item>
                 <el-button type="primary" @click="upload">上传<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-form>
@@ -150,7 +179,6 @@ export default {
 
     </div>
 </template>
-
 
 <style scoped>
 /* Import Bootstrap CSS */
@@ -179,14 +207,10 @@ export default {
 
 .file-browser .card-body img {
     width: 100px;
-    /* 修改为你需要的宽度 */
     height: auto;
-    /* 保持图片的纵横比 */
     margin-right: 10px;
-    /* 修改为你需要的右边距 */
     display: block;
     margin: 0 auto;
-    /* 居中对齐 */
 }
 
 .navbar-nav .nav-item .nav-link {
@@ -214,13 +238,14 @@ export default {
 /* 鼠标悬停到“我的用户”和“添加用户”时背景颜色与“评测预约”一致 */
 .navbar-nav .nav-item .dropdown-menu li:hover {
     background-color: blue;
-    /* 修改为“评测预约”的背景颜色 */
 }
 
 .header-actions .el-icon-setting {
     font-size: 24px;
-    /* 设置图标大小 */
     color: white;
-    /* 设置图标颜色为白色 */
+}
+
+.el-button {
+    border: none;
 }
 </style>

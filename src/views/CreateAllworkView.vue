@@ -1,109 +1,3 @@
-<script>
-import Axios from 'axios';
-
-export default {
-    name: 'AppHeader',
-    data() {
-        return {
-            currentTableData: [],
-            filteredData: [], // 用于保存筛选后的数据
-            currentPage: 1, // 当前页码
-            itemsPerPage: 8, // 每页显示条数
-            totalPages: 0, // 总页数
-            showDialog: false, // 控制弹窗显示
-            workIdToApply: null, // 记录要申请版权的作品ID
-            searchId: '' // 查找作品ID
-        };
-    },
-    computed: {
-        paginatedData() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.filteredData.slice(start, end);
-        }
-    },
-    created() {
-        this.fetchTableData(); // 初始加载数据
-    },
-    methods: {
-        filterData() {
-            if (this.searchId.trim()) {
-                this.filteredData = this.currentTableData.filter(item => item.id === parseInt(this.searchId));
-            } else {
-                this.filteredData = this.currentTableData;
-            }
-            this.totalPages = Math.ceil(this.filteredData.length / this.itemsPerPage); // 更新总页数
-            this.currentPage = 1; // 重置为第一页
-        },
-        Applyfor(workId) {
-            this.workIdToApply = workId;
-            this.showDialog = true;
-        },
-        gouseradd() {
-            this.$router.push('/creatework').catch(err => {
-                if (err.name !== 'NavigationDuplicated') console.error(err);
-            });
-        },
-        gomyuser() {
-            this.$router.push('/creatormanagement').catch(err => {
-                if (err.name !== 'NavigationDuplicated') console.error(err);
-            });
-        },
-        gohome() {
-            this.$router.push('/creatorhome').catch(err => {
-                if (err.name !== 'NavigationDuplicated') console.error(err);
-            });
-        },
-        gouserall() {
-            this.$router.push('/createallwork').catch(err => {
-                if (err.name !== 'NavigationDuplicated') console.error(err);
-            });
-        },
-        confirmApply() {
-            Axios.get('http://localhost:8080/works/creator/submitCopyright', { params: { workId: this.workIdToApply } })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        this.$message.success("已提交版权申请，待审核");
-                        this.fetchTableData(); // 重新获取数据
-                    } else {
-                        this.$message.error(response.data.msg);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error applying for copyright:", error);
-                })
-                .finally(() => {
-                    this.resetDialog(); // 关闭弹窗
-                });
-        },
-        resetDialog() {
-            this.showDialog = false;
-            this.workIdToApply = null;
-        },
-        fetchTableData() {
-            const creatorId = localStorage.getItem("id");
-            Axios.get('http://localhost:8080/works/creator/show', { params: { id: creatorId } })
-                .then((resp) => {
-                    this.currentTableData = resp.data.data;
-                    this.filterData(); // 过滤数据
-                })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                });
-        },
-        outLogin() {
-            this.$message.success("退出成功");
-            localStorage.removeItem("id");
-            this.$router.push('/');
-        },
-        changePage(page) {
-            if (page < 1 || page > this.totalPages) return;
-            this.currentPage = page;
-        }
-    }
-};
-</script>
-
 <template>
     <div>
         <!-- Header -->
@@ -163,43 +57,38 @@ export default {
                 </ul>
             </div>
         </nav>
+
         <div class="main-container">
             <div class="page-header">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">作品管理</li>
-                    <li class="breadcrumb-item active">我的作品</li>
+                    <li class="breadcrumb-item active">全部作品</li>
                 </ol>
             </div>
             <div class="content-wrapper">
                 <div class="card-body">
-                    <div class="selbox">
-                        <!-- Filter options (if any) -->
+                    <!-- 查找输入框 -->
+                    <div class="search-box">
                         <el-input v-model="searchId" placeholder="输入作品ID查找" @input="filterData"></el-input>
                     </div>
+
                     <div class="tablebox">
-                        <el-dialog title="确认申请版权" :visible.sync="showDialog" width="30%" @close="resetDialog">
-                            <p>确定要申请版权吗？</p>
-                            <span slot="footer" class="dialog-footer">
-                                <el-button @click="resetDialog">取消</el-button>
-                                <el-button type="primary" @click="confirmApply">确认</el-button>
-                            </span>
-                        </el-dialog>
                         <el-table :data="paginatedData">
                             <el-table-column prop="id" label="作品id" width="140"></el-table-column>
+                            <el-table-column prop="creatorName" label="作者" width="140"></el-table-column>
                             <el-table-column prop="title" label="作品名称" width="140"></el-table-column>
                             <el-table-column prop="description" label="作品简介" width="120"></el-table-column>
-                            <el-table-column prop="status" label="审核状态" width="120"></el-table-column>
-                            <el-table-column prop="createdAt" label="初始时间" width="120"></el-table-column>
-                            <el-table-column prop="updatedAt" label="更新时间" width="120"></el-table-column>
-                            <el-table-column prop="copyrightNumber" label="版权编号" width="120"></el-table-column>
-                            <el-table-column prop="copyrightApplied" label="是否申请" width="120">
+                            <el-table-column prop="status" label="审核状态" width="120">
                                 <template #default="{ row }">
-                                    {{ row.copyrightApplied ? "已申请" : "未申请" }}
+                                    <span
+                                        :style="{ color: row.status === 'approved' ? 'green' : (row.status === 'rejected' ? 'red' : 'black') }">
+                                        {{ row.status }}
+                                    </span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="操作">
+                            <el-table-column label="">
                                 <template #default="{ row }">
-                                    <button class="btn btn-success" @click="Applyfor(row.id)">申请版权</button>
+                                    <!-- 操作按钮等内容 -->
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -226,12 +115,106 @@ export default {
                             </li>
                         </ul>
                     </nav>
-
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<script>
+import Axios from 'axios';
+
+export default {
+    name: 'AppHeader',
+    data() {
+        return {
+            currentTableData: [],
+            filteredData: [], // 用于保存筛选后的数据
+            searchId: '', // 用户输入的作品ID
+            currentPage: 1, // 当前页码
+            itemsPerPage: 10, // 每页显示条数
+            totalPages: 0 // 总页数
+        };
+    },
+    computed: {
+        paginatedData() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredData.slice(start, end);
+        }
+    },
+    created() {
+        Axios.get("http://localhost:8080/works/creator/all")
+            .then((result) => {
+                this.currentTableData = result.data.data;
+                this.filterData(); // 过滤数据
+            })
+            .catch((error) => {
+                console.error("There was an error!", error);
+            });
+    },
+    methods: {
+        filterData() {
+            if (this.searchId.trim()) {
+                this.filteredData = this.currentTableData.filter(item => item.id === parseInt(this.searchId));
+            } else {
+                this.filteredData = this.currentTableData;
+            }
+            this.totalPages = Math.ceil(this.filteredData.length / this.itemsPerPage); // 更新总页数
+            this.currentPage = 1; // 重置为第一页
+        },
+        gouseradd() {
+            const targetRoute = '/creatework';
+            if (this.$route.path !== targetRoute) {
+                this.$router.push(targetRoute).catch(err => {
+                    if (err.name !== 'NavigationDuplicated') {
+                        console.error(err);
+                    }
+                });
+            }
+        },
+        gomyuser() {
+            const targetRoute = '/creatormanagement';
+            if (this.$route.path !== targetRoute) {
+                this.$router.push(targetRoute).catch(err => {
+                    if (err.name !== 'NavigationDuplicated') {
+                        console.error(err);
+                    }
+                });
+            }
+        },
+        gohome() {
+            const creatorhome = '/creatorhome';
+            if (this.$route.path !== creatorhome) {
+                this.$router.push(creatorhome).catch(err => {
+                    if (err.name !== 'creatorhome') {
+                        console.error(err);
+                    }
+                });
+            }
+        },
+        gouserall() {
+            const createallwork = '/createallwork';
+            if (this.$route.path !== createallwork) {
+                this.$router.push(createallwork).catch(err => {
+                    if (err.name !== 'createallwork') {
+                        console.error(err);
+                    }
+                });
+            }
+        },
+        outLogin() {
+            this.$message.success("退出成功");
+            localStorage.removeItem("id");
+            this.$router.push('/');
+        },
+        changePage(page) {
+            if (page < 1 || page > this.totalPages) return;
+            this.currentPage = page;
+        }
+    }
+};
+</script>
 
 <style>
 /* Import Bootstrap CSS */
@@ -314,12 +297,6 @@ export default {
     /* 如果表格宽度超出容器，允许水平滚动 */
 }
 
-.tablebox {
-    width: 100%;
-    overflow-x: auto;
-    /* 如果表格宽度超出容器，允许水平滚动 */
-}
-
 .tablebox .el-table {
     width: 100%;
     /* 设置表格宽度为100% */
@@ -374,5 +351,25 @@ export default {
 
 .el-button {
     border: none;
+}
+
+.pagination .page-item {
+    cursor: pointer;
+}
+
+.pagination .page-item.disabled .page-link {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #1047eed3;
+    border-color: #1047eed3;
+    color: white;
+}
+
+/* 查找框样式 */
+.search-box {
+    margin-bottom: 20px;
 }
 </style>
