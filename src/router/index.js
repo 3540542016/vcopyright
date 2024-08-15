@@ -17,12 +17,6 @@ const routes = [
   }
   ,
   {
-      path: '/creatorhome',
-      name: 'creatorhome',
-      component: () => import('../views/CreatorHomeView.vue')
-    }
-  ,
-  {
       path: '/creatework',
       name: 'creatework',
       component: () => import('../views/CreateWorkView.vue')

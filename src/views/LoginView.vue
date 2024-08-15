@@ -113,7 +113,7 @@ export default {
             switch (userType) {
               case "creator":
                 this.$message.success("登录成功");
-                this.$router.push("/creatorhome");
+                this.$router.push("/creatormanagement");
                 break;
               case "auditor":
                 this.$message.success("登录成功");

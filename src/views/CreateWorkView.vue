@@ -1,4 +1,5 @@
 <script>
+import '@fortawesome/fontawesome-free/css/all.min.css';
 export default {
     data() {
         return {
@@ -23,16 +24,6 @@ export default {
         },
         gomyuser() {
             const targetRoute = '/creatormanagement';
-            if (this.$route.path !== targetRoute) {
-                this.$router.push(targetRoute).catch(err => {
-                    if (err.name !== 'NavigationDuplicated') {
-                        console.error(err);
-                    }
-                });
-            }
-        },
-        gohome() {
-            const targetRoute = '/creatorhome';
             if (this.$route.path !== targetRoute) {
                 this.$router.push(targetRoute).catch(err => {
                     if (err.name !== 'NavigationDuplicated') {
@@ -117,45 +108,35 @@ export default {
         </header>
 
         <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg custom-navbar">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#royalHospitalsNavbar"
-                aria-controls="royalHospitalsNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon">
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                </span>
-            </button>
-            <div class="collapse navbar-collapse" id="royalHospitalsNavbar">
-                <ul class="navbar-nav">
-                    <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <li class="nav-item">
-                            <i class="icon-home nav-icon" @click="gohome">首页</i>
-                        </li>
-                    </a>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="icon-add-user nav-icon"></i>
-                            作品管理
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
-                            <li @click="gomyuser">我的作品</li>
-                            <li @click="gouseradd">添加作品</li>
-                            <li @click="gouserall">全部作品</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+
 
         <!-- Main Content -->
         <div class="main-container">
             <div class="page-header">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active">欢迎使用版权管理创作者中心平台</li>
+                    <li class="breadcrumb-item">作品管理</li>
+                    <li class="breadcrumb-item active">添加作品
+                    </li>
                 </ol>
+                <nav class="navbar navbar-expand-lg custom-navbar">
+
+                    <div class="collapse navbar-collapse" id="royalHospitalsNavbar">
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="icon-add-user nav-icon"></i>
+                                    作品管理
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
+                                    <li @click="gomyuser">我的作品</li>
+                                    <li @click="gouseradd">添加作品</li>
+                                    <li @click="gouserall">全部作品</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
             </div>
         </div>
 
@@ -167,11 +148,12 @@ export default {
             </el-radio-group>
             <div style="margin: 20px;"></div>
             <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-                <el-form-item label="作品名称">
+                <el-form-item label="作品名称:">
                     <el-input v-model="formLabelAlign.title" placeholder="请输入作品名称"></el-input>
                 </el-form-item>
-                <el-form-item label="作品介绍">
-                    <el-input v-model="formLabelAlign.description" placeholder="请输入作品介绍"></el-input>
+                <el-form-item label="作品介绍:">
+                    <el-input type="textarea" v-model="formLabelAlign.description" placeholder="请输入作品介绍" maxlength="60"
+                        show-word-limit></el-input>
                 </el-form-item>
                 <el-button type="primary" @click="upload">上传<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-form>
@@ -186,19 +168,86 @@ export default {
 @import "../assets/css/main.css";
 @import "../assets/css/css.css";
 
-/* Your custom styles */
+body {
+    background-color: #f7fafe;
+}
+
+/* Header 样式 */
 .header {
-    background-color: #1047eed3;
-    border-bottom: 1px solid #ddd;
+    background: linear-gradient(to left, rgba(106, 188, 255, 0.8), rgba(255, 117, 250, 0.8));
     padding: 10px 0;
+    margin: 0;
+    /* 确保没有多余的 margin */
 }
 
-.header .logo img {
-    max-width: 120px;
+/* 去掉边距和内边距 */
+.header,
+.page-header {
+    border: none;
+    /* 去掉边框 */
 }
 
-.header-actions .dropdown-menu {
-    width: 300px;
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to left, rgba(106, 188, 255, 0.8),
+            rgba(255, 117, 250, 0.8));
+    padding: 10px;
+    margin: 0;
+    /* 确保没有多余的 margin */
+}
+
+.page-header .breadcrumb {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+
+.page-header .navbar {
+    margin: 0;
+    background: transparent;
+}
+
+.navbar {
+    background: linear-gradient(to left, rgba(106, 188, 255, 0.8), rgba(255, 117, 250, 0.8));
+    /* 蓝色到粉色的渐变背景 */
+}
+
+.navbar-nav .nav-item .dropdown-menu {
+    background: linear-gradient(to left, rgba(106, 188, 255, 0.8), rgba(255, 117, 250, 0.8));
+    /* 蓝色渐变背景 */
+    border: none;
+    /* 移除边框 */
+    border-radius: 8px;
+    /* 圆角边框 */
+    padding: 0;
+    /* 移除内边距 */
+}
+
+.navbar-nav .nav-item .dropdown-menu li {
+    color: #ffffff;
+    /* 白色文字 */
+    padding: 10px 20px;
+    /* 内边距 */
+    font-size: 16px;
+    /* 字体大小 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    /* 分隔线 */
+}
+
+.navbar-nav .nav-item .dropdown-menu li:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* 悬停背景色 */
+    color: #ffffff;
+    /* 悬停时文字颜色 */
+    cursor: pointer;
+    /* 鼠标指针样式 */
+}
+
+.navbar-nav .nav-item .dropdown-menu li:last-child {
+    border-bottom: none;
+    /* 去除最后一项的分隔线 */
 }
 
 .file-browser {
@@ -213,33 +262,6 @@ export default {
     margin: 0 auto;
 }
 
-.navbar-nav .nav-item .nav-link {
-    display: flex;
-    align-items: center;
-}
-
-.navbar-nav .nav-item .nav-link:hover {
-    cursor: pointer;
-}
-
-/* 首页字体加粗并居中对齐 */
-.navbar-nav .nav-item .icon-home {
-    color: #fff;
-    font-weight: bold;
-    text-align: center;
-    display: block;
-    font-style: normal;
-}
-
-.navbar-nav .nav-item .icon-home:hover {
-    color: #1047eed3;
-}
-
-/* 鼠标悬停到“我的用户”和“添加用户”时背景颜色与“评测预约”一致 */
-.navbar-nav .nav-item .dropdown-menu li:hover {
-    background-color: blue;
-}
-
 .header-actions .el-icon-setting {
     font-size: 24px;
     color: white;
@@ -247,5 +269,61 @@ export default {
 
 .el-button {
     border: none;
+}
+
+/* 针对特定图标放大 */
+.header-actions .fas.fa-cog {
+    font-size: 2em;
+    color: #ffffff;
+    /* 设置具体的图标大小 */
+}
+
+.navbar-nav .icon-add-user {
+    font-size: 1.8em;
+    /* 调整"添加用户"图标的大小 */
+}
+
+/* 其他图标的样式调整 */
+.navbar-nav .icon-home {
+    font-size: 1.8em;
+    /* 主页图标的大小 */
+}
+
+/* 优化 el-input 搜索框样式 */
+.el-input {
+    border: 1px solid rgba(0, 76, 140, 0.3);
+    /* 轻微的边框颜色 */
+    border-radius: 4px;
+    /* 圆角边框 */
+    padding: 5px 10px;
+    /* 内边距 */
+    transition: border-color 0.3s ease;
+    /* 边框颜色过渡效果 */
+}
+
+/* 输入框获取焦点时的样式 */
+.el-input.is-focus {
+    border-color: rgba(0, 76, 140, 0.8);
+    /* 更显眼的边框颜色 */
+    box-shadow: 0 0 5px rgba(0, 76, 140, 0.5);
+    /* 添加阴影效果 */
+}
+
+/* 输入框悬停时的样式 */
+.el-input:hover {
+    border-color: rgba(0, 76, 140, 0.5);
+    /* 悬停时的边框颜色 */
+}
+
+.el-input .el-input__prefix {
+    font-size: 14px;
+    /* 图标大小 */
+    color: rgba(0, 76, 140, 0.7);
+    /* 图标颜色 */
+}
+
+.el-input .el-input__inner {
+    padding-left: 30px;
+    /* 留出空间给图标 */
 }
 </style>
